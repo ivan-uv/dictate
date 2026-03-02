@@ -7,4 +7,9 @@ requires-python = ">=3.9"
 dependencies = [
     "huggingface-hub>=1.5.0",
     "mlx-whisper>=0.4.3",
+    "numpy>=2.0.2",
+    "pynput>=1.8.1",
+    "pyperclip>=1.11.0",
+    "scipy>=1.13.1",
+    "sounddevice>=0.5.5",
 ]
