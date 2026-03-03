@@ -1,0 +1,1 @@
+I did some testing and I'm settling on funk for the sound start and blow for the sound end.

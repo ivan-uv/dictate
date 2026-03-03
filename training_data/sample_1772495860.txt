@@ -1,0 +1,1 @@
+Sweet, looks like it worked perfectly. I like the sounds, but I do wish they were a little bit different. Where can I explore all of the sounds and listen to them? Is it that file that you reference in the global whisper.py?

@@ -1,0 +1,1 @@
+I really appreciate your help here. This looks like a fantastic doc though I will say it did get sort of split up in some sections are markdown blocks and other sections look like formatted markdown blocks. I don't know if there's a way to really force it all to get shoved into a markdown block but if there is that would be fantastic.

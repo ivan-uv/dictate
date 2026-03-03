@@ -14,8 +14,8 @@ FS = 16000
 MODEL = "mlx-community/whisper-large-v3-turbo"
 
 # Built-in macOS Sounds
-SOUND_START = "/System/Library/Sounds/Tink.aiff"
-SOUND_END = "/System/Library/Sounds/Glass.aiff"
+SOUND_START = "/System/Library/Sounds/Funk.aiff"
+SOUND_END = "/System/Library/Sounds/Blow.aiff"
 
 class EchoPulse:
     def __init__(self):
