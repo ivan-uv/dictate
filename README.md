@@ -41,7 +41,7 @@ Or after installing the project: `dictate` (see `pyproject.toml` scripts).
 
 ---
 
-## 📈 Roadmap
+## 📈 Roadmap & Future-Proofing
 
 ### 1. Smart Formatting
 Bias the model toward technical speech (e.g., snake_case) using Whisper's `initial_prompt` or a local LLM refiner (via Ollama).
@@ -49,8 +49,16 @@ Bias the model toward technical speech (e.g., snake_case) using Whisper's `initi
 ### 2. Fine-Tuning
 Utilize the collected `training_data/` to train a lightweight adapter using **MLX-LoRA** for jargon-specific accuracy.
 
-### 3. Background Persistence
-Create a `com.dictate.plist` Launch Agent to allow the process to run as a background daemon starting at login.
+### 3. Background Persistence (Launch Agent)
+To move away from an open terminal, a `com.dictate.plist` can be added to `~/Library/LaunchAgents`. This allows the script to run as a background daemon that starts at login.
+
+**Draft `plist` logic:**
+- Label: `com.dictate.app`
+- ProgramArguments: `[path/to/uv, run, path/to/main.py]`
+- RunAtLoad: `true`
+
+### 4. Menu Bar UI (The "Product" Layer)
+Wrapping the core logic in **Rumps** (a Python library for macOS menu bar apps) would provide a visual "Recording..." indicator in the system tray and a toggle for "Sleep Mode," moving the project from a CLI tool to a native-feeling utility.
 
 ---
 
