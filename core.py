@@ -48,6 +48,20 @@ TRIGGER_KEY = keyboard.Key.cmd_r
 FS = 16000
 MODEL = "mlx-community/whisper-large-v3-turbo"
 
+# Bias transcription toward technical / code-style speech (snake_case, APIs, etc.)
+# Can be overridden at runtime via the DICTATE_INITIAL_PROMPT environment variable.
+INITIAL_PROMPT = os.environ.get(
+    "DICTATE_INITIAL_PROMPT",
+    (
+        "Transcribing mostly technical dictation for programming, code, and terminal commands. "
+        "Prefer snake_case for identifiers when appropriate, for example: function_name, "
+        "api_client, http_request, gpu_memory, numpy_array, config_dict, cli_tool. "
+        "Keep acronyms like HTTP, API, GPU, CLI uppercase. "
+        "When the speaker enumerates several issues or items (e.g. 'there are three things ... the UI, the lag, and the foo bar'), "
+        "format the output as a short introduction line followed by a markdown-style list with each item on its own line starting with '- '."
+    ),
+)
+
 # Built-in macOS Sounds
 SOUND_START = "/System/Library/Sounds/Funk.aiff"
 SOUND_END = "/System/Library/Sounds/Pop.aiff"
@@ -101,7 +115,11 @@ class Dictate:
         write(audio_path, FS, audio_data)
         
         # Transcribe
-        result = mlx_whisper.transcribe(audio_path, path_or_hf_repo=MODEL)
+        result = mlx_whisper.transcribe(
+            audio_path,
+            path_or_hf_repo=MODEL,
+            initial_prompt=INITIAL_PROMPT,
+        )
         text = result['text'].strip()
         
         with open(f"training_data/sample_{timestamp}.txt", "w") as f:
