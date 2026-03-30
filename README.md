@@ -23,13 +23,43 @@ I wanted a seamless, privacy-first way to dictate text directly into any macOS a
 ---
 
 ## 🚀 Execution
-Single entry point (run via `uv` for dependencies):
+
+### Manual (Foreground)
+Run directly from a terminal (useful for debugging):
 
 ```bash
 uv run main.py
 ```
 
 Or after installing the project: `dictate` (see `pyproject.toml` scripts).
+
+### Background Daemon (Recommended)
+Dictate can run as a macOS Launch Agent — it starts automatically at login, restarts if it crashes, and requires no open terminal window.
+
+A ready-to-use plist is included at `archive/com.dictate.app.plist`. To set it up:
+
+1. **Copy the plist into place:**
+   ```bash
+   cp archive/com.dictate.app.plist ~/Library/LaunchAgents/
+   ```
+
+2. **Edit paths if needed.** Open `~/Library/LaunchAgents/com.dictate.app.plist` and verify:
+   - The `uv` path matches your install (`which uv` to check — defaults to `/opt/homebrew/bin/uv`).
+   - The `WorkingDirectory` and `--project` path point to your local clone of this repo.
+
+3. **Load the agent:**
+   ```bash
+   launchctl load ~/Library/LaunchAgents/com.dictate.app.plist
+   ```
+   That's it — Dictate is now running. It will also start automatically on every future login.
+
+**Useful commands:**
+| Action | Command |
+|---|---|
+| Check status | `launchctl list \| grep dictate` |
+| Stop | `launchctl unload ~/Library/LaunchAgents/com.dictate.app.plist` |
+| View logs | `cat /tmp/com.dictate.app.out.log` and `cat /tmp/com.dictate.app.err.log` |
+| Restart | Unload then load again, or just `launchctl kickstart -k gui/$(id -u)/com.dictate.app` |
 
 ---
 
@@ -49,15 +79,7 @@ Bias the model toward technical speech (e.g., snake_case) using Whisper's `initi
 ### 2. Fine-Tuning
 Utilize the collected `training_data/` to train a lightweight adapter using **MLX-LoRA** for jargon-specific accuracy.
 
-### 3. Background Persistence (Launch Agent)
-To move away from an open terminal, a `com.dictate.plist` can be added to `~/Library/LaunchAgents`. This allows the script to run as a background daemon that starts at login.
-
-**Draft `plist` logic:**
-- Label: `com.dictate.app`
-- ProgramArguments: `[path/to/uv, run, path/to/main.py]`
-- RunAtLoad: `true`
-
-### 4. Menu Bar UI (The "Product" Layer)
+### 3. Menu Bar UI (The "Product" Layer)
 Wrapping the core logic in **Rumps** (a Python library for macOS menu bar apps) would provide a visual "Recording..." indicator in the system tray and a toggle for "Sleep Mode," moving the project from a CLI tool to a native-feeling utility.
 
 ---
