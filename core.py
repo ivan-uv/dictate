@@ -48,7 +48,7 @@ def _pasteboard_restore(snapshot):
 # --- CONFIG ---
 TRIGGER_KEY = keyboard.Key.cmd_r
 FS = 16000
-MODEL = "mlx-community/whisper-large-v3-turbo"
+MODEL = os.environ.get("DICTATE_MODEL", "mlx-community/whisper-large-v3-turbo")
 
 # Bias transcription toward technical / code-style speech (snake_case, APIs, etc.)
 # Can be overridden at runtime via the DICTATE_INITIAL_PROMPT environment variable.
@@ -106,12 +106,12 @@ class Dictate:
             self.audio_frames.append(indata.copy())
 
     def start_recording(self):
-        self.play_sound(SOUND_START) # "Bloop"
-        print("🔴 [HOLD] Recording...")
         self.audio_frames = []
         self.recording = True
         self.stream = sd.InputStream(samplerate=FS, channels=1, callback=self.audio_callback)
         self.stream.start()
+        self.play_sound(SOUND_START) # "Bloop"
+        print("🔴 [HOLD] Recording...")
 
     def stop_recording(self):
         print("🟢 [RELEASED] Transcribing...")
@@ -152,10 +152,14 @@ class Dictate:
             write(audio_path, FS, audio_data)
 
         # Transcribe
+        # condition_on_previous_text=False prevents runaway repetition loops on
+        # longer clips — Whisper processes audio in 30s windows and normally feeds
+        # its own output back as context, which reinforces hallucination loops.
         result = mlx_whisper.transcribe(
             audio_path,
             path_or_hf_repo=MODEL,
             initial_prompt=INITIAL_PROMPT,
+            condition_on_previous_text=False,
         )
         text = result['text'].strip()
 
